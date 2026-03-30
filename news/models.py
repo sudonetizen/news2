@@ -31,3 +31,24 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         return reverse('news:article_detail', kwargs={'slug': self.slug})
+
+
+class Comment(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="news_comments")
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="article_comments")
+
+    body = models.TextField()
+
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    
+    is_visible = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['created']
+        indexes = [
+            models.Index(fields=['created']),
+        ]
+
+    def __str__(self):
+        return f'comment by {self.author} on {self.article}'
