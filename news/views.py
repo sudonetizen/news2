@@ -6,6 +6,7 @@ from .models import Article
 class ArticleListView(ListView):
     queryset = Article.objects.filter(is_published=True)
     template_name = 'article_list.html' 
+    paginate_by = 10
 
 
 class ArticleDetailView(DetailView):
