@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.views import View
+from django.db.models import Q
 from .models import Article, Comment
 from .forms import CommentForm
 
@@ -32,3 +33,15 @@ class UpdateCommentView(View):
             Comment.objects.create(author=author, article=article, body=form.cleaned_data['body'])
 
         return redirect(article)
+
+def search_article(request):
+    query = request.GET.get("q", "").strip()
+    results = []
+
+    if query:
+        title_search = Q(title__icontains=query)
+        body_search = Q(body__icontains=query)
+        published_articles = Article.objects.filter(is_published=True)
+        results = published_articles.filter(title_search | body_search)
+    
+    return render(request, 'search_list.html', {'search_results': results})

@@ -11,6 +11,12 @@
 
     <body>
         <nav>
+            <a href="{% url 'home' %}">Home</a> 
+
+            <form action="{% url 'news:article_search' %}" method="get">
+                <input type="text" name="q">
+                <button type="submit">Search</button>
+            </form>
         </nav>
 
         <main>
