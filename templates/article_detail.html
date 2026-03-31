@@ -4,6 +4,7 @@
 
 {% block content %}
     <h1>{{ article.title }}</h1>
+    {% include 'tags_form.html' with article=article %}
     <p>Published {{ article.publish }} by {{ article.author }}</p>
     <p>{{ article.body }}</p>
 

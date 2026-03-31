@@ -41,7 +41,20 @@ def search_article(request):
     if query:
         title_search = Q(title__icontains=query)
         body_search = Q(body__icontains=query)
+        tag_search = Q(tags__icontains=query)
         published_articles = Article.objects.filter(is_published=True)
-        results = published_articles.filter(title_search | body_search)
+        results = published_articles.filter(title_search | body_search | tag_search )
     
     return render(request, 'search_list.html', {'search_results': results})
+
+
+def search_tag(request, slug):
+    query = request.GET.get("q", "").strip()
+    results = []
+
+    if query:
+        tag_search = Q(tags__icontains=query)
+        published_articles = Article.objects.filter(is_published=True).exclude(slug=slug)
+        results = published_articles.filter(tag_search)
+
+    return render(request, 'search_tag.html', {'search_results': results})

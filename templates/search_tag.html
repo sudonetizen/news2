@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Search{% endblock title %}
+{% block title %}Search by Tag{% endblock title %}
 
 {% block content %}
-    <h2>Search Results:</h2>
+    <h2>Search by Tag Results:</h2>
     {% for result in search_results %}
         <p><a href="{{ result.get_absolute_url }}">{{ result.title }}</a> | tags: {{ result.tags|join:", " }} | {{ result.intro }}</p>
     {% empty %}
-        <p>Not Found</p>
+        <p>Not Found Other articles with same tag.</p>
     {% endfor %}
 {% endblock content %}
+
