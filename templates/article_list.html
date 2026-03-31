@@ -8,6 +8,7 @@
         <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
         <p>Published {{ article.publish }} by {{ article.author }}</p>
         <p>{{ article.intro }}</p>
+        <p>tags: {{ article.tags|join:", " }}</p>
     {% empty %}
         <p>No articles available.</p>
     {% endfor %}
