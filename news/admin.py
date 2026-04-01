@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Comment
+from .models import Article, Comment, Like
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
@@ -15,3 +15,10 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ['is_visible', 'created', 'updated']
     search_fields = ['author', 'body']
     show_facets = admin.ShowFacets.ALWAYS
+
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    list_display = ['author', 'article']
+    list_filter = ['author', 'article']
+    search_fields = ['author', 'article']
+
