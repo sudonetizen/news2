@@ -12,6 +12,14 @@
     <body>
         <nav>
             <a href="{% url 'home' %}">Home</a> 
+            {% if user.is_authenticated %}
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
 
             <form action="{% url 'news:article_search' %}" method="get">
                 <input type="text" name="q">
