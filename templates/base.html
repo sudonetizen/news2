@@ -19,6 +19,7 @@
                 </form>
             {% else %}
                 <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'accounts:signup' %}">Signup</a>
             {% endif %}
 
             <form action="{% url 'news:article_search' %}" method="get">
