@@ -4,22 +4,31 @@
 
 {% block content %}
     <h1>{{ article.title }}</h1>
-    {% include 'tags_form.html' with article=article %}
+
+    {% if article.is_published %}
+        {% include 'tags_form.html' with article=article %}
+    {% else %}
+        tags: {{ article.tags|join:", " }} 
+    {% endif %}
+
     <p>Published {{ article.publish }} by {{ article.author }}</p>
     <p>{{ article.body }}</p>
 
-    {% include 'like_form.html' with article=article %}
+    {% if article.is_published %}
+        {% include 'like_form.html' with article=article %}
 
-    {% include 'comment_form.html' with article=article comment_form=comment_form %}
+        {% include 'comment_form.html' with article=article comment_form=comment_form %}
 
-    {% with comments.count as total_comments %}
-        <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
-    {% endwith %}
+        {% with comments.count as total_comments %}
+            <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+        {% endwith %}
 
 
-    {% for comment in comments %}
-        <p>Comment by {{ comment.author }} at {{ comment.created }}</p>
-        <p>{{ comment.body }}</p>
-        {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %}
+        {% for comment in comments %}
+            <p>Comment by {{ comment.author }} at {{ comment.created }}</p>
+            <p>{{ comment.body }}</p>
+            {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+    {% endif %}
+
 {% endblock content %}

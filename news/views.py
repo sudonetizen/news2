@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
+from django.views.generic.edit import CreateView
 from django.views import View
 from django.db.models import Q
 from .models import Article, Comment, Like
-from .forms import CommentForm
+from .forms import CommentForm, ArticleForm
 
 
 class ArticleListView(ListView):
@@ -88,3 +89,32 @@ class UpdateLikeView(View):
             obj.delete()
 
         return redirect(article)
+
+class ArticleCreateView(View):
+    def get(self, request):
+        sent = False
+        form = ArticleForm()
+
+        return render(request, 'article_form.html', {'sent':sent, 'form': form})
+
+    def post(self, request):
+        sent = True
+        form = ArticleForm(request.POST)
+        
+        if form.is_valid():
+            cd = form.cleaned_data
+            Article.objects.create(
+                author=request.user,
+                title=cd['title'],
+                intro=cd['intro'],
+                body=cd['body'],
+                tags=cd['tags'],
+                slug=cd['slug']
+            )
+
+        return render(request, 'article_form.html', {'sent': sent})
+
+
+class ArticleModerateListView(ListView):
+    queryset = Article.objects.filter(is_published=False)
+    template_name = "article_moderate_list.html"
