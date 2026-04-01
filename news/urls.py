@@ -8,6 +8,8 @@ from .views import (
     UpdateLikeView,
     ArticleCreateView,
     ArticleModerateListView,
+    ArticleUpdateView,
+    ArticleDeleteView,
 )
 
 app_name = 'news'
@@ -16,6 +18,8 @@ urlpatterns = [
     path("", ArticleListView.as_view(), name="article_list"),
     path("<slug:slug>/tag/", search_tag, name="tag_search"),
     path("search/", search_article, name="article_search"),
+    path("<slug:slug>/edit/", ArticleUpdateView.as_view(), name="article_update"),
+    path("<slug:slug>/delete/", ArticleDeleteView.as_view(), name="article_delete"),
     path("moderate/", ArticleModerateListView.as_view(), name="article_moderate"),
     path("article/new/", ArticleCreateView.as_view(), name="article_new"),
     path("<slug:slug>/", ArticleDetailView.as_view(), name="article_detail"),

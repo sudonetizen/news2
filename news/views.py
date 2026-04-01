@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
 from django.db.models import Q
 from .models import Article, Comment, Like
@@ -118,3 +120,24 @@ class ArticleCreateView(View):
 class ArticleModerateListView(ListView):
     queryset = Article.objects.filter(is_published=False)
     template_name = "article_moderate_list.html"
+
+
+class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Article
+    fields = ['title', 'slug', 'intro', 'body', 'tags']
+    template_name = "article_edit.html"
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+
+
+class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Article
+    template_name = "article_delete.html"
+    success_url = reverse_lazy("home")
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+

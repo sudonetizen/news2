@@ -16,6 +16,10 @@
 
     {% if article.is_published %}
         {% include 'like_form.html' with article=article %}
+    {% else %}
+        <a href="{% url 'news:article_update' article.slug %}">Edit Article</a> | 
+        <a href="{% url 'news:article_delete' article.slug %}">Delete Article</a>
+    {% endif %}
 
         {% include 'comment_form.html' with article=article comment_form=comment_form %}
 
@@ -29,6 +33,5 @@
             <p>{{ comment.body }}</p>
             {% if not forloop.last %}<hr>{% endif %}
         {% endfor %}
-    {% endif %}
 
 {% endblock content %}
