@@ -1,0 +1,6 @@
+<form action="{% url 'news:add_comment' article.slug %}" method="post">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <input type="submit" value="add comment">
+</form>
+

@@ -8,11 +8,9 @@
     <p>Published {{ article.publish }} by {{ article.author }}</p>
     <p>{{ article.body }}</p>
 
-    <form action="{% url 'news:add_comment' article.slug %}" method="post">
-        {% csrf_token %}
-        {{ comment_form.as_p }}
-        <input type="submit" value="add comment">
-    </form>
+    {% include 'like_form.html' with article=article %}
+
+    {% include 'comment_form.html' with article=article comment_form=comment_form %}
 
     {% with comments.count as total_comments %}
         <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>

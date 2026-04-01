@@ -18,7 +18,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ['author', 'article']
+    list_display = ['author', 'article', 'created', 'updated']
     list_filter = ['author', 'article']
     search_fields = ['author', 'article']
 

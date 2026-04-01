@@ -56,6 +56,8 @@ class Comment(models.Model):
 class Like(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="news_likes")
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name="article_likes")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     
     class Meta:
         unique_together = ("author", "article")

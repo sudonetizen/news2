@@ -1,0 +1,9 @@
+{% with article.article_likes.count as total_likes %}
+<form action="{% url 'news:add_like' article.slug %}" method="post">
+    {% csrf_token %}
+    <button type="submit" name="q" value={{ article.slug }}>
+    <p>{{ total_likes }} Like{{ total_likes|pluralize }}</p>
+    </button>
+</form>
+{% endwith %}
+

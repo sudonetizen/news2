@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.views import View
 from django.db.models import Q
-from .models import Article, Comment
+from .models import Article, Comment, Like
 from .forms import CommentForm
 
 
@@ -75,3 +75,16 @@ def search_tag(request, slug):
         results = published_articles.filter(tag_search)
 
     return render(request, 'search_tag.html', {'search_results': results})
+
+
+class UpdateLikeView(View):
+    def post(self, request, slug):
+        article = get_object_or_404(Article, slug=slug)
+        author = request.user 
+    
+        try: Like.objects.create(article=article, author=author)
+        except:
+            obj = Like.objects.get(article=article, author=author)
+            obj.delete()
+
+        return redirect(article)
