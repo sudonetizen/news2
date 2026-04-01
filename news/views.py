@@ -141,3 +141,9 @@ class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         obj = self.get_object()
         return obj.author == self.request.user
 
+
+class UserArticleView(LoginRequiredMixin, View):
+    def get(self, request):
+        articles = Article.objects.filter(author=request.user)
+        
+        return render(request, 'user_articles.html', {'articles':articles})
