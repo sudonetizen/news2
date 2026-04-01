@@ -12,6 +12,19 @@ class ArticleListView(ListView):
     paginate_by = 10
 
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        articles = self.get_queryset()
+        unique_tags = set()
+        for article in articles:
+            for tag in article.tags:
+                unique_tags.add(tag)    
+
+        context['unique_tags'] = unique_tags
+        return context
+
+
 class ArticleDetailView(DetailView):
     model = Article
     template_name = 'article_detail.html'
@@ -50,11 +63,15 @@ def search_article(request):
 
 def search_tag(request, slug):
     query = request.GET.get("q", "").strip()
+    published_articles = Article.objects.filter(is_published=True)
     results = []
 
     if query:
         tag_search = Q(tags__icontains=query)
-        published_articles = Article.objects.filter(is_published=True).exclude(slug=slug)
+
+        if slug:
+            published_articles = published_articles.exclude(slug=slug)
+
         results = published_articles.filter(tag_search)
 
     return render(request, 'search_tag.html', {'search_results': results})

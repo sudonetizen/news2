@@ -1,0 +1,6 @@
+<form action="{% url 'news:tag_search' None %}" method="get">
+    {% for tag in tags %}
+        <button type="submit" name="q" value={{ tag }}>{{ tag }}</button>
+    {% endfor %}
+</form>
+

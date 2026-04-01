@@ -4,6 +4,10 @@
 
 {% block content %}
     <h1>News</h1>
+
+    <h2>All Tags:</h2>
+    {% include 'tags_all_form.html' with tags=unique_tags %}
+
     {% for article in article_list %}
         <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
         <p>Published {{ article.publish }} by {{ article.author }}</p>
