@@ -28,9 +28,20 @@ class ArticleListView(ListView):
         return context
 
 
-class ArticleDetailView(DetailView):
+class ArticleDetailView(UserPassesTestMixin, DetailView):
     model = Article
     template_name = 'article_detail.html'
+
+    def test_func(self):
+        is_mod = self.request.user.groups.filter(name='moderators').exists()
+        is_wrt = self.request.user.groups.filter(name='writers').exists()
+        obj = self.get_object()
+
+        if obj.is_published == True:
+            return True
+        elif obj.is_published == False and (is_mod or is_wrt):
+            return True
+        return False
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -39,7 +50,7 @@ class ArticleDetailView(DetailView):
         return context
 
 
-class UpdateCommentView(View):
+class UpdateCommentView(LoginRequiredMixin, View):
     def post(self, request, slug):
         article = get_object_or_404(Article, slug=slug)
         author = request.user
@@ -57,9 +68,10 @@ def search_article(request):
     if query:
         title_search = Q(title__icontains=query)
         body_search = Q(body__icontains=query)
+        intro_search = Q(intro__icontains=query)
         tag_search = Q(tags__icontains=query)
         published_articles = Article.objects.filter(is_published=True)
-        results = published_articles.filter(title_search | body_search | tag_search )
+        results = published_articles.filter(title_search | body_search | tag_search | intro_search )
     
     return render(request, 'search_list.html', {'search_results': results})
 
@@ -80,7 +92,7 @@ def search_tag(request, slug):
     return render(request, 'search_tag.html', {'search_results': results})
 
 
-class UpdateLikeView(View):
+class UpdateLikeView(LoginRequiredMixin, View):
     def post(self, request, slug):
         article = get_object_or_404(Article, slug=slug)
         author = request.user 
@@ -92,7 +104,10 @@ class UpdateLikeView(View):
 
         return redirect(article)
 
-class ArticleCreateView(View):
+class ArticleCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.groups.filter(name='writers').exists()        
+
     def get(self, request):
         sent = False
         form = ArticleForm()
@@ -117,10 +132,12 @@ class ArticleCreateView(View):
         return render(request, 'article_form.html', {'sent': sent})
 
 
-class ArticleModerateListView(ListView):
+class ArticleModerateListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     queryset = Article.objects.filter(is_published=False)
     template_name = "article_moderate_list.html"
 
+    def test_func(self):
+        return self.request.user.groups.filter(name='moderators').exists()        
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
@@ -139,16 +156,24 @@ class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         obj = self.get_object()
-        return obj.author == self.request.user
+        if obj.author == self.request.user or self.request.user.groups.filter(name='moderators').exists():
+            return True
+        return False
 
 
-class UserArticleView(LoginRequiredMixin, View):
+class UserArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.groups.filter(name='writers').exists()        
+
     def get(self, request):
         articles = Article.objects.filter(author=request.user)
         
         return render(request, 'user_articles.html', {'articles':articles})
 
-class ArticleApproveView(LoginRequiredMixin, View):
+class ArticleApproveView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.groups.filter(name='moderators').exists()        
+
     def get(self, request, slug):
         article = get_object_or_404(Article, slug=slug)
         article.is_published = True

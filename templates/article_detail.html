@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load news_tags %}
 
 {% block title %}{{ article.title }}{% endblock title %}
 
 {% block content %}
+
     <h1>{{ article.title }}</h1>
 
     {% if article.is_published %}
@@ -17,22 +19,31 @@
     {% if article.is_published %}
         {% include 'like_form.html' with article=article %}
     {% else %}
-        <a href="{% url 'news:article_update' article.slug %}">Edit Article</a> | 
-        <a href="{% url 'news:article_delete' article.slug %}">Delete Article</a> |
-        <a href="{% url 'news:article_approve' article.slug %}">Approve Article</a>
+        {% if user|has_group:"writers" %}
+            <a href="{% url 'news:article_update' article.slug %}">Edit Article</a>  
+        {% endif %}
+
+        {% if user|has_group:"writers" or user|has_group:"moderators" %}
+            <a href="{% url 'news:article_delete' article.slug %}">Delete Article</a> 
+        {% endif %}
+
+        {% if user|has_group:"moderators" %}
+            <a href="{% url 'news:article_approve' article.slug %}">Approve Article</a>
+        {% endif %}
+
     {% endif %}
 
-        {% include 'comment_form.html' with article=article comment_form=comment_form %}
+    {% include 'comment_form.html' with article=article comment_form=comment_form %}
 
-        {% with comments.count as total_comments %}
-            <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
-        {% endwith %}
+    {% with comments.count as total_comments %}
+        <h2>{{ total_comments }} comment{{ total_comments|pluralize }}</h2>
+    {% endwith %}
 
 
-        {% for comment in comments %}
-            <p>Comment by {{ comment.author }} at {{ comment.created }}</p>
-            <p>{{ comment.body }}</p>
-            {% if not forloop.last %}<hr>{% endif %}
-        {% endfor %}
+    {% for comment in comments %}
+        <p>Comment by {{ comment.author }} at {{ comment.created }}</p>
+        <p>{{ comment.body }}</p>
+        {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
 
 {% endblock content %}

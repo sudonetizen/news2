@@ -3,7 +3,7 @@
 {% block title %}User{% endblock title %}
 
 {% block content %}
-    <h2>Your Articles:</h2>
+    <h2>Hi {{ user.username }}! Your Articles:</h2>
     {% for article in articles %}
         <p>Is published: {{ article.is_published }} | <a href="{{ article.get_absolute_url }}">{{ article.title }}</a> | tags: {{ article.tags|join:", " }} | {{ article.intro }}</p>
     {% empty %}
