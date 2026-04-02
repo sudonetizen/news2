@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse 
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -147,3 +147,11 @@ class UserArticleView(LoginRequiredMixin, View):
         articles = Article.objects.filter(author=request.user)
         
         return render(request, 'user_articles.html', {'articles':articles})
+
+class ArticleApproveView(LoginRequiredMixin, View):
+    def get(self, request, slug):
+        article = get_object_or_404(Article, slug=slug)
+        article.is_published = True
+        article.save()
+
+        return redirect("news:article_list")

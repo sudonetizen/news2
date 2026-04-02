@@ -3,6 +3,7 @@
 {% block title %}Articles submitted for moderation{% endblock title %}
 
 {% block content %}
+    <h2>Articles submitted for moderation</h2>
     {% for article in article_list %}
         <h2><a href="{{ article.get_absolute_url }}">{{ article.title }}</a></h2>
         <p>Published {{ article.publish }} by {{ article.author }}</p>

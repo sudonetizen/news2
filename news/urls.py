@@ -10,6 +10,7 @@ from .views import (
     ArticleModerateListView,
     ArticleUpdateView,
     ArticleDeleteView,
+    ArticleApproveView,
 )
 
 app_name = 'news'
@@ -20,6 +21,7 @@ urlpatterns = [
     path("search/", search_article, name="article_search"),
     path("<slug:slug>/edit/", ArticleUpdateView.as_view(), name="article_update"),
     path("<slug:slug>/delete/", ArticleDeleteView.as_view(), name="article_delete"),
+    path("<slug:slug>/approve/", ArticleApproveView.as_view(), name="article_approve"),
     path("moderate/", ArticleModerateListView.as_view(), name="article_moderate"),
     path("article/new/", ArticleCreateView.as_view(), name="article_new"),
     path("<slug:slug>/", ArticleDetailView.as_view(), name="article_detail"),
