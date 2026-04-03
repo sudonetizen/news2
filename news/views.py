@@ -5,7 +5,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views import View
 from django.db.models import Q
-from .models import Article, Comment, Like
+from .models import Article, Comment, Like, Read
 from .forms import CommentForm, ArticleForm
 
 
@@ -31,6 +31,15 @@ class ArticleListView(ListView):
 class ArticleDetailView(UserPassesTestMixin, DetailView):
     model = Article
     template_name = 'article_detail.html'
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+
+        if self.request.user.is_authenticated:
+            try: Read.objects.create(user=self.request.user, article=obj)
+            except: pass
+
+        return obj
 
     def test_func(self):
         is_mod = self.request.user.groups.filter(name='moderators').exists()
@@ -173,6 +182,23 @@ class UserArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
         articles = Article.objects.filter(author=request.user)
         
         return render(request, 'user_articles.html', {'articles':articles})
+
+
+class UserProfileView(LoginRequiredMixin, View):
+    def get(self, request):
+        read_articles = request.user.news_read.filter(user=request.user)
+        like_articles = request.user.news_likes.filter(author=request.user)
+
+        comment_articles = request.user.news_comments.filter(author=request.user)
+        sorted_comment_articles = []
+        titles = set()
+
+        for a in comment_articles:
+            if a.article.title not in titles:
+                sorted_comment_articles.append(a)
+                titles.add(a.article.title)
+
+        return render(request, 'profile_articles.html', {'read_articles': read_articles, 'like_articles': like_articles, 'comment_articles': sorted_comment_articles})
 
 class ArticleApproveView(LoginRequiredMixin, UserPassesTestMixin, View):
     def test_func(self):

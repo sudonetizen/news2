@@ -11,6 +11,7 @@ from .views import (
     ArticleUpdateView,
     ArticleDeleteView,
     ArticleApproveView,
+    UserProfileView,
 )
 
 app_name = 'news'
@@ -19,6 +20,7 @@ urlpatterns = [
     path("", ArticleListView.as_view(), name="article_list"),
     path("<slug:slug>/tag/", search_tag, name="tag_search"),
     path("search/", search_article, name="article_search"),
+    path("profile/", UserProfileView.as_view(), name="user_profile"),
     path("<slug:slug>/edit/", ArticleUpdateView.as_view(), name="article_update"),
     path("<slug:slug>/delete/", ArticleDeleteView.as_view(), name="article_delete"),
     path("<slug:slug>/approve/", ArticleApproveView.as_view(), name="article_approve"),
