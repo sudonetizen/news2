@@ -14,7 +14,7 @@
     {% endif %}
 
     <p>Published {{ article.publish }} by {{ article.author }}</p>
-    <p>{{ article.body }}</p>
+    <p>{{ article.body|markdown }}</p>
 
     {% if article.is_published %}
         {% include 'like_form.html' with article=article %}
