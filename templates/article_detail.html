@@ -19,11 +19,8 @@
     {% if article.is_published %}
         {% include 'like_form.html' with article=article %}
     {% else %}
-        {% if user|has_group:"writers" %}
-            <a href="{% url 'news:article_update' article.slug %}">Edit Article</a>  
-        {% endif %}
-
         {% if user|has_group:"writers" or user|has_group:"moderators" %}
+            <a href="{% url 'news:article_update' article.slug %}">Edit Article</a>  
             <a href="{% url 'news:article_delete' article.slug %}">Delete Article</a> 
         {% endif %}
 

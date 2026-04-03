@@ -146,7 +146,11 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         obj = self.get_object()
-        return obj.author == self.request.user
+        if obj.author == self.request.user:
+            return True
+        elif self.request.user.groups.filter(name='moderators').exists():
+            return True
+        return False
 
 
 class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -177,6 +181,7 @@ class ArticleApproveView(LoginRequiredMixin, UserPassesTestMixin, View):
     def get(self, request, slug):
         article = get_object_or_404(Article, slug=slug)
         article.is_published = True
+        article.article_comments.all().delete()
         article.save()
 
         return redirect("news:article_list")
