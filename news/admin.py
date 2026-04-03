@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Comment, Like
+from .models import Article, Comment, Like, Read
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
@@ -22,3 +22,8 @@ class LikeAdmin(admin.ModelAdmin):
     list_filter = ['author', 'article']
     search_fields = ['author', 'article']
 
+@admin.register(Read)
+class ReadAdmin(admin.ModelAdmin):
+    list_display = ['user', 'article', 'created', 'updated']
+    list_filter = ['user', 'article']
+    search_fields = ['user', 'article']
